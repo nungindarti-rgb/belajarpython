@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Lab Komputer MAN 1 Yogyakarta - Python Interaktif</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #0a2f1f 0%, #1e4a2f 40%, #f5c542 100%);
+            background-attachment: fixed;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(10, 30, 15, 0.3);
+            backdrop-filter: blur(3px);
+            border-radius: 48px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            background: radial-gradient(circle at 20% 30%, rgba(255,215,0,0.2), rgba(0,0,0,0.3));
+            border-radius: 36px;
+            padding: 20px 25px;
+            text-align: center;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,215,0,0.6);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #FFD966, #FFF2B5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .header h3 { color: #f8f3d9; margin-top: 8px; }
+        .header p { color: #FFECB3; font-weight: 600; }
+
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .nav-btn {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid #FFD966;
+            color: #FFE5A3;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+        }
+        .nav-btn:hover {
+            background: #FFD966;
+            color: #0a2f1f;
+            transform: scale(1.02);
+            box-shadow: 0 0 12px gold;
+        }
+
+        .panel {
+            background: rgba(255, 250, 225, 0.95);
+            border-radius: 40px;
+            padding: 25px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .panel.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        .modul-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .modul-card, .praktik-card {
+            background: linear-gradient(135deg, #1e4a2f, #0d301f);
+            border-radius: 28px;
+            padding: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #FFD966;
+        }
+        .modul-card:hover, .praktik-card:hover {
+            transform: translateY(-8px);
+            background: linear-gradient(135deg, #2a6e42, #144d2a);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        .modul-card h3, .praktik-card h3 { color: #FFD966; margin-bottom: 10px; }
+
+        .materi-rinci, .praktik-rinci {
+            background: #fef9e6;
+            border-radius: 28px;
+            padding: 25px;
+            margin-top: 20px;
+            line-height: 1.8;
+        }
+        .materi-rinci h3, .praktik-rinci h3 { color: #1e4a2f; margin: 20px 0 10px 0; border-left: 5px solid #FFD966; padding-left: 15px; }
+        .materi-rinci h4, .praktik-rinci h4 { color: #2b6e42; margin: 15px 0 8px 0; }
+        .materi-rinci ul, .praktik-rinci ul { margin-left: 25px; margin-bottom: 15px; }
+        .materi-rinci code, .praktik-rinci code { background: #2d2d2d; color: #f8f8f2; padding: 2px 8px; border-radius: 8px; font-family: monospace; }
+
+        .game-area {
+            background: #1e2a2a;
+            border-radius: 30px;
+            padding: 20px;
+        }
+        .console {
+            background: #0a0f0f;
+            padding: 20px;
+            border-radius: 20px;
+            color: #0f0;
+            font-family: monospace;
+        }
+        .python-editor {
+            background: #1e1e1e;
+            border-radius: 16px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .python-editor textarea {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            width: 100%;
+            resize: vertical;
+        }
+        .python-output {
+            background: #0a0f0f;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 12px;
+            font-family: monospace;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+        input, textarea {
+            padding: 10px;
+            border-radius: 30px;
+            border: 1px solid #ccc;
+            width: 100%;
+            margin: 10px 0;
+        }
+        button {
+            background: #2b6e42;
+            border: none;
+            color: white;
+            padding: 10px 22px;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #f5b81b;
+            color: #1d3e2a;
+        }
+        .timer {
+            background: #0a2f1f;
+            color: #FFD966;
+            padding: 5px 20px;
+            border-radius: 60px;
+            font-size: 1.3rem;
+            display: inline-block;
+        }
+        .hide { display: none; }
+        .progress-bar {
+            background: #e0d6b0;
+            border-radius: 30px;
+            height: 10px;
+            margin: 15px 0;
+        }
+        .progress-fill {
+            background: #2b6e42;
+            border-radius: 30px;
+            height: 10px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .option-item {
+            background: #f3efdf;
+            padding: 10px 18px;
+            margin: 10px 0;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .option-item:hover, .option-item.selected {
+            background: #FFD966;
+            transform: translateX(5px);
+        }
+        .modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-card {
+            background: #fff7e8;
+            border-radius: 48px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: auto;
+        }
+        footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #FFECB3;
+        }
+        @media (max-width: 700px) {
+            .header h1 { font-size: 1.3rem; }
+            .nav-btn { padding: 8px 12px; font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🧪 LABORATORIUM KOMPUTER<br>MAN 1 YOGYAKARTA</h1>
+        <h3>📘 Mapel Informatika | Nung Indarti, S.Kom, M.Pd</h3>
+        <p>✨ Kelas X (Sepuluh) - Pemrograman Python | 7 Pertemuan ✨</p>
+    </div>
+
+    <div class="nav">
+        <button class="nav-btn" onclick="showPanel('materi')">📚 7 Materi</button>
+        <button class="nav-btn" onclick="showPanel('praktik')">💻 Praktik Python</button>
+        <button class="nav-btn" onclick="showPanel('game')">🎮 Game</button>
+        <button class="nav-btn" onclick="showPanel('quiz')">📝 Quiz 100</button>
+        <button class="nav-btn" onclick="showPanel('refleksi')">🧠 Refleksi</button>
+        <button class="nav-btn" onclick="loginGuru()">🔐 Login Guru</button>
+    </div>
+
+    <!-- PANEL 7 MATERI -->
+    <div id="panelMateri" class="panel">
+        <h2 style="color:#2b5e2f;">📖 7 Pertemuan - Materi Pemrograman Python</h2>
+        <div id="materiList" class="modul-grid"></div>
+        <div id="materiDetail" class="materi-rinci hide">
+            <button onclick="backToMateriList()" style="margin-bottom:15px;">← Kembali ke Daftar Materi</button>
+            <div id="materiKonten"></div>
+        </div>
+    </div>
+
+    <!-- PANEL PRAKTIK -->
+    <div id="panelPraktik" class="panel">
+        <h2 style="color:#2b5e2f;">💻 Praktik Python - Program Sederhana</h2>
+        <p style="margin-bottom:15px;">5 contoh program Python dalam kehidupan sehari-hari. Klik salah satu untuk mencoba!</p>
+        <div id="praktikList" class="modul-grid"></div>
+        <div id="praktikDetail" class="praktik-rinci hide">
+            <button onclick="backToPraktikList()" style="margin-bottom:15px;">← Kembali ke Daftar Program</button>
+            <div id="praktikKonten"></div>
+        </div>
+    </div>
+
+    <!-- PANEL GAME -->
+    <div id="panelGame" class="panel">
+        <h2>🎮 Game Interaktif: "Python Treasure Hunt"</h2>
+        <p>Tebak angka rahasia (1-20) - Praktik konsep variabel, input, if, loop!</p>
+        <div class="game-area">
+            <div class="console">
+                <p id="gameMsg">🔍 Masukkan tebakan angka 1-20</p>
+                <input type="number" id="guessInput" placeholder="Tebakan Anda">
+                <button onclick="tebakAngka()">🔮 Tebak</button>
+                <button onclick="resetGame()">🔄 Game Baru</button>
+                <p id="attemptCount">Percobaan: 0</p>
+                <p id="gameHint"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANEL QUIZ -->
+    <div id="panelQuiz" class="panel">
+        <div id="quizAuth">
+            <h2>📋 Quiz Akhir (100 Soal PG, 75 Menit)</h2>
+            <div style="background:#FFF2DF; padding:20px; border-radius:28px;">
+                <label>Nama Siswa : </label><input type="text" id="studentName" placeholder="Nama Lengkap"><br><br>
+                <label>Kelas : </label><input type="text" id="studentClass" placeholder="Contoh: X-A"><br><br>
+                <button onclick="startQuiz()">🚀 Mulai Quiz</button>
+            </div>
+        </div>
+        <div id="quizActive" class="hide">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+                <span>👩‍🎓 <span id="quizName"></span> | Kelas: <span id="quizClass"></span></span>
+                <span class="timer" id="timerDisplay">75:00</span>
+            </div>
+            <div class="progress-bar"><div id="quizProgressFill" class="progress-fill"></div></div>
+            <div id="quizSoal"></div>
+            <div style="margin-top:20px; display:flex; justify-content:space-between; flex-wrap:wrap;">
+                <button id="quizPrevBtn">⬅ Sebelum</button>
+                <span id="quizCounter">Soal 1/100</span>
+                <button id="quizNextBtn">Berikut ➡</button>
+                <button id="quizSubmitBtn" style="background:#c97e00;">✔️ Selesai</button>
+            </div>
+        </div>
+        <div id="quizResult" class="hide">
+            <h3>🏆 Hasil Quiz</h3>
+            <p id="quizResultText"></p>
+            <button onclick="resetQuiz()">Kembali ke Menu</button>
+        </div>
+    </div>
+
+    <!-- PANEL REFLEKSI -->
+    <div id="panelRefleksi" class="panel">
+        <h2>📝 Menu Refleksi</h2>
+        <div style="display:flex; gap:20px; flex-wrap:wrap;">
+            <button onclick="showRefleksi('siswa')" style="background:#2c5e3f;">🧑‍🎓 Refleksi Siswa (10 Esai)</button>
+            <button onclick="showRefleksi('guru')" style="background:#b97f10;">👩‍🏫 Refleksi Guru (10 Esai)</button>
+        </div>
+        <div id="refleksiForm" class="hide" style="margin-top:20px;"></div>
+        <div id="refleksiSuccess" class="hide" style="background:#d4edda; padding:15px; border-radius:20px; margin-top:15px;">✅ Refleksi tersimpan!</div>
+    </div>
+</div>
+<footer>🐍 7 Materi + 5 Praktik Python + Game + Quiz 100 Soal | Lab Komputer MAN 1 Yogyakarta</footer>
+
+<script>
+    // ============ DATA 7 MATERI ============
+    const materiList = [
+        { id:1, nama:"Pertemuan 1: Sejarah Python", konten:`
+            <h3>🐍 Sejarah Python</h3>
+            <h4>A. Tokoh Pencipta Python</h4>
+            <p>Python diciptakan oleh <strong>Guido van Rossum</strong>, seorang pemrogram asal Belanda. Pengerjaan Python dimulai pada akhir tahun 1980-an, tepatnya bulan Desember 1989.</p>
+            <h4>B. Tahun Rilis</h4>
+            <ul><li>Python pertama kali dirilis ke publik pada tahun <strong>1991</strong></li><li>Versi Python 2 dirilis pada tahun <strong>2000</strong></li><li>Versi Python 3 dirilis pada tahun <strong>2008</strong></li></ul>
+            <h4>C. Asal Nama "Python"</h4>
+            <p>Terinspirasi dari grup komedi Inggris <strong>"Monty Python's Flying Circus"</strong>.</p>
+            <h4>D. Filosofi Python (The Zen of Python)</h4>
+            <p>Prinsip: <em>Simple is better than complex, Readability counts</em>.</p>
+        `},
+        { id:2, nama:"Pertemuan 2: Variabel, Tipe Data & Operator", konten:`
+            <h3>📦 Variabel, Tipe Data, dan Operator Aritmatika</h3>
+            <h4>A. Variabel</h4>
+            <p>Aturan penamaan: huruf/underscore, case-sensitive, tidak boleh keyword Python.</p>
+            <h4>B. Tipe Data Dasar</h4>
+            <ul><li><strong>int</strong> : bilangan bulat (10, -5)</li><li><strong>float</strong> : bilangan desimal (3.14)</li><li><strong>str</strong> : teks ("Halo")</li><li><strong>bool</strong> : True/False</li></ul>
+            <h4>C. Operator Aritmatika</h4>
+            <p><code>+ - * / // % **</code></p>
+        `},
+        { id:3, nama:"Pertemuan 3: Input dan Output", konten:`
+            <h3>⌨️ Input dan Output (I/O)</h3>
+            <p><code>print()</code> untuk output, <code>input()</code> untuk input. <code>input()</code> selalu mengembalikan string, perlu konversi ke int/float.</p>
+            <p>f-string: <code>print(f"Halo {nama}")</code></p>
+        `},
+        { id:4, nama:"Pertemuan 4: Conditional Statements", konten:`
+            <h3>🔀 Percabangan</h3>
+            <p><code>if, elif, else</code>. Operator perbandingan: <code>==, !=, >, <, >=, <=</code>. Operator logika: <code>and, or, not</code>.</p>
+        `},
+        { id:5, nama:"Pertemuan 5: Loops", konten:`
+            <h3>🔄 Perulangan</h3>
+            <p><code>for</code> dan <code>while</code>. <code>range()</code> untuk generate angka. <code>break, continue</code> untuk kontrol.</p>
+        `},
+        { id:6, nama:"Pertemuan 6: Function", konten:`
+            <h3>⚙️ Function</h3>
+            <p><code>def nama_fungsi():</code> untuk membuat fungsi. <code>return</code> untuk mengembalikan nilai.</p>
+        `},
+        { id:7, nama:"Pertemuan 7: Troubleshooting", konten:`
+            <h3>🩺 Troubleshooting</h3>
+            <p>Syntax Error, Runtime Error, Logical Error. Gunakan <code>try-except</code> untuk menangani error.</p>
+        `}
+    ];
+
+    // ============ DATA 5 PRAKTIK ============
+    const praktikList = [
+        { id:1, nama:"1. Kalkulator Sederhana", icon:"🧮", desc:"Menghitung penjumlahan, pengurangan, perkalian, pembagian", 
+          konten:`
+            <h3>🧮 Program Kalkulator Sederhana</h3>
+            <p><strong>Kegunaan:</strong> Membantu menghitung belanja, membagi tagihan, atau menghitung diskon.</p>
+            <div class="python-editor">
+                <textarea id="code1" rows="10">print("=== KALKULATOR SEDERHANA ===")
+print("1. Penjumlahan")
+print("2. Pengurangan") 
+print("3. Perkalian")
+print("4. Pembagian")
+pilih = input("Pilih (1-4): ")
+a = float(input("Angka pertama: "))
+b = float(input("Angka kedua: "))
+if pilih == '1':
+    print(f"Hasil: {a} + {b} = {a+b}")
+elif pilih == '2':
+    print(f"Hasil: {a} - {b} = {a-b}")
+elif pilih == '3':
+    print(f"Hasil: {a} * {b} = {a*b}")
+elif pilih == '4':
+    if b != 0:
+        print(f"Hasil: {a} / {b} = {a/b}")
+    else:
+        print("Error: Tidak bisa dibagi nol!")</textarea>
+                <button onclick="runCode(1)">▶ Jalankan Kode</button>
+                <div id="output1" class="python-output">Klik 'Jalankan Kode' untuk melihat hasil...</div>
+            </div>
+        `},
+        { id:2, nama:"2. Konversi Suhu", icon:"🌡️", desc:"Mengubah Celcius ke Fahrenheit, Kelvin, Reamur",
+          konten:`
+            <h3>🌡️ Program Konversi Suhu</h3>
+            <p><strong>Kegunaan:</strong> Membantu saat memasak atau traveling ke negara dengan satuan suhu berbeda.</p>
+            <div class="python-editor">
+                <textarea id="code2" rows="8">print("=== KONVERSI SUHU ===")
+c = float(input("Masukkan suhu Celcius: "))
+f = (c * 9/5) + 32
+k = c + 273.15
+r = c * 4/5
+print(f"{c}°C = {f}°F")
+print(f"{c}°C = {k} K")
+print(f"{c}°C = {r}°Ré")</textarea>
+                <button onclick="runCode(2)">▶ Jalankan Kode</button>
+                <div id="output2" class="python-output">Klik 'Jalankan Kode' untuk melihat hasil...</div>
+            </div>
+        `},
+        { id:3, nama:"3. Diskon Belanja", icon:"🛒", desc:"Menghitung harga setelah diskon",
+          konten:`
+            <h3>🛒 Program Diskon Belanja</h3>
+            <p><strong>Kegunaan:</strong> Menghitung harga akhir saat ada diskon di toko.</p>
+            <div class="python-editor">
+                <textarea id="code3" rows="8">print("=== PROGRAM DISKON ===")
+harga = float(input("Harga barang: Rp "))
+diskon = float(input("Diskon (%): "))
+potongan = harga * (diskon / 100)
+harga_akhir = harga - potongan
+print(f"Harga awal: Rp {harga:,.0f}")
+print(f"Diskon {diskon}%: Rp {potongan:,.0f}")
+print(f"Harga akhir: Rp {harga_akhir:,.0f}")</textarea>
+                <button onclick="runCode(3)">▶ Jalankan Kode</button>
+                <div id="output3" class="python-output">Klik 'Jalankan Kode' untuk melihat hasil...</div>
+            </div>
+        `},
+        { id:4, nama:"4. Cek Kelulusan", icon:"📝", desc:"Menentukan lulus/tidak berdasarkan nilai",
+          konten:`
+            <h3>📝 Program Cek Kelulusan</h3>
+            <p><strong>Kegunaan:</strong> Mengetahui apakah nilai memenuhi standar kelulusan.</p>
+            <div class="python-editor">
+                <textarea id="code4" rows="12">print("=== CEK KELULUSAN ===")
+nama = input("Nama siswa: ")
+nilai = float(input("Nilai (0-100): "))
+if nilai >= 90:
+    predikat = "A (Sangat Baik)"
+    status = "LULUS"
+elif nilai >= 75:
+    predikat = "B (Baik)"
+    status = "LULUS"
+elif nilai >= 60:
+    predikat = "C (Cukup)"
+    status = "TIDAK LULUS"
+else:
+    predikat = "D (Kurang)"
+    status = "TIDAK LULUS"
+print(f"\nNama: {nama}")
+print(f"Nilai: {nilai}")
+print(f"Predikat: {predikat}")
+print(f"Status: {status}")</textarea>
+                <button onclick="runCode(4)">▶ Jalankan Kode</button>
+                <div id="output4" class="python-output">Klik 'Jalankan Kode' untuk melihat hasil...</div>
+            </div>
+        `},
+        { id:5, nama:"5. Hitung BMI", icon:"⚖️", desc:"Menghitung Indeks Massa Tubuh",
+          konten:`
+            <h3>⚖️ Program Hitung BMI</h3>
+            <p><strong>Kegunaan:</strong> Memantau kesehatan tubuh (berat badan ideal, kurang, atau berlebih).</p>
+            <div class="python-editor">
+                <textarea id="code5" rows="12">print("=== PROGRAM HITUNG BMI ===")
+nama = input("Nama Anda: ")
+berat = float(input("Berat badan (kg): "))
+tinggi = float(input("Tinggi badan (m): "))
+bmi = berat / (tinggi ** 2)
+print(f"\nHalo {nama}!")
+print(f"BMI Anda: {bmi:.1f}")
+if bmi < 18.5:
+    print("Kategori: Kurus")
+    print("Saran: Perbanyak makan bergizi")
+elif bmi < 25:
+    print("Kategori: Normal (Ideal)")
+    print("Saran: Pertahankan!")
+elif bmi < 30:
+    print("Kategori: Gemuk")
+    print("Saran: Perbanyak olahraga")
+else:
+    print("Kategori: Obesitas")
+    print("Saran: Konsultasi ke dokter")</textarea>
+                <button onclick="runCode(5)">▶ Jalankan Kode</button>
+                <div id="output5" class="python-output">Klik 'Jalankan Kode' untuk melihat hasil...</div>
+            </div>
+        `}
+    ];
+
+    // ============ FUNGSI SHOW PANEL ============
+    function showPanel(panel) {
+        // Sembunyikan semua panel
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        // Tampilkan panel yang dipilih
+        document.getElementById('panel' + panel.charAt(0).toUpperCase() + panel.slice(1)).classList.add('active');
+        
+        // Render konten sesuai panel
+        if(panel === 'materi') renderMateriList();
+        if(panel === 'praktik') renderPraktikList();
+    }
+
+    // ============ MATERI ============
+    function renderMateriList() {
+        let html = '';
+        materiList.forEach(m => {
+            html += `<div class="modul-card" onclick="showMateriDetail(${m.id})">
+                        <h3>📘 ${m.nama}</h3>
+                        <p>Klik untuk melihat materi lengkap</p>
+                     </div>`;
+        });
+        const listContainer = document.getElementById('materiList');
+        if(listContainer) {
+            listContainer.innerHTML = html;
+            listContainer.classList.remove('hide');
+        }
+        const detailContainer = document.getElementById('materiDetail');
+        if(detailContainer) detailContainer.classList.add('hide');
+    }
+
+    function showMateriDetail(id) {
+        let materi = materiList.find(m => m.id === id);
+        if(!materi) return;
+        document.getElementById('materiList').classList.add('hide');
+        document.getElementById('materiDetail').classList.remove('hide');
+        document.getElementById('materiKonten').innerHTML = materi.konten;
+    }
+
+    function backToMateriList() {
+        document.getElementById('materiList').classList.remove('hide');
+        document.getElementById('materiDetail').classList.add('hide');
+    }
+
+    // ============ PRAKTIK ============
+    function renderPraktikList() {
+        let html = '';
+        praktikList.forEach(p => {
+            html += `<div class="praktik-card" onclick="showPraktikDetail(${p.id})">
+                        <h3>${p.icon} ${p.nama}</h3>
+                        <p>${p.desc}</p>
+                     </div>`;
+        });
+        const listContainer = document.getElementById('praktikList');
+        if(listContainer) {
+            listContainer.innerHTML = html;
+            listContainer.classList.remove('hide');
+        }
+        const detailContainer = document.getElementById('praktikDetail');
+        if(detailContainer) detailContainer.classList.add('hide');
+    }
+
+    function showPraktikDetail(id) {
+        let praktik = praktikList.find(p => p.id === id);
+        if(!praktik) return;
+        document.getElementById('praktikList').classList.add('hide');
+        document.getElementById('praktikDetail').classList.remove('hide');
+        document.getElementById('praktikKonten').innerHTML = praktik.konten;
+    }
+
+    function backToPraktikList() {
+        document.getElementById('praktikList').classList.remove('hide');
+        document.getElementById('praktikDetail').classList.add('hide');
+    }
+
+    // ============ RUN CODE (Simulasi Python) ============
+    function runCode(id) {
+        let code = document.getElementById(`code${id}`).value;
+        let outputDiv = document.getElementById(`output${id}`);
+        let output = [];
+        
+        // Simulasi console.log
+        let originalLog = console.log;
+        console.log = function(...args) {
+            output.push(args.join(' '));
+        };
+        
+        // Simulasi input dengan prompt
+        let originalPrompt = window.prompt;
+        let inputValues = [];
+        
+        // Regex untuk mencari input() dalam kode
+        let hasInput = code.includes('input(');
+        
+        if(hasInput) {
+            // Kumpulkan semua prompt yang dibutuhkan
+            let prompts = [];
+            let tempCode = code;
+            let match;
+            while((match = /input\(["'](.*?)["']\)/g.exec(tempCode)) !== null) {
+                prompts.push(match[1]);
+            }
+            
+            // Minta input satu per satu
+            for(let i=0; i<prompts.length; i++) {
+                let val = originalPrompt(prompts[i]);
+                inputValues.push(val || '');
+            }
+            
+            // Ganti semua input() dengan nilai yang sudah dimasukkan
+            let inputIndex = 0;
+            let newCode = code.replace(/input\(["'](.*?)["']\)/g, function() {
+                let val = inputValues[inputIndex++];
+                return JSON.stringify(val);
+            });
+            code = newCode;
+        }
+        
+        try {
+            const func = new Function(code);
+            func();
+            outputDiv.innerHTML = output.map(line => `>>> ${line}`).join('<br>') || "✅ Program selesai dijalankan.";
+        } catch(e) {
+            outputDiv.innerHTML = `❌ Error: ${e.message}`;
+        }
+        
+        console.log = originalLog;
+        window.prompt = originalPrompt;
+    }
+
+    // ============ GAME ============
+    let gameSecret = Math.floor(Math.random()*20)+1;
+    let gameAttempts = 0;
+    
+    function tebakAngka() {
+        let guessInput = document.getElementById('guessInput');
+        if(!guessInput) return;
+        let guess = parseInt(guessInput.value);
+        if(isNaN(guess)) { 
+            document.getElementById('gameMsg').innerHTML = "Masukkan angka!"; 
+            return; 
+        }
+        gameAttempts++;
+        document.getElementById('attemptCount').innerHTML = `Percobaan: ${gameAttempts}`;
+        if(guess === gameSecret) {
+            document.getElementById('gameMsg').innerHTML = `✨ BENAR! Angka ${gameSecret}. Anda menang! ✨`;
+            document.getElementById('gameHint').innerHTML = "🎉 Hebat! Klik Game Baru untuk bermain lagi!";
+            gameSecret = Math.floor(Math.random()*20)+1;
+            gameAttempts = 0;
+        } else if(guess > gameSecret) {
+            document.getElementById('gameMsg').innerHTML = "📈 Terlalu besar! Coba lagi";
+        } else {
+            document.getElementById('gameMsg').innerHTML = "📉 Terlalu kecil! Coba lagi";
+        }
+        guessInput.value = '';
+    }
+    
+    function resetGame() {
+        gameSecret = Math.floor(Math.random()*20)+1;
+        gameAttempts = 0;
+        document.getElementById('attemptCount').innerHTML = "Percobaan: 0";
+        document.getElementById('gameMsg').innerHTML = "Game direset! Tebak angka 1-20";
+        document.getElementById('gameHint').innerHTML = "";
+        let guessInput = document.getElementById('guessInput');
+        if(guessInput) guessInput.value = "";
+    }
+
+    // ============ QUIZ ============
+    let soalBank = [];
+    let quizState = { answers: new Array(100).fill(null), current: 0, timeLeft: 4500, timer: null, name: "", kelas: "", submitted: false };
+    let hasilQuiz = [];
+    let refleksiSiswa = [], refleksiGuru = [];
+
+    function generateSoalBank() {
+        let bank = [];
+        for(let i=1;i<=100;i++) {
+            let text = `Soal ${i}: Siapa pencipta Python?`;
+            let opt = ["Guido van Rossum", "Linus Torvalds", "Dennis Ritchie", "James Gosling", "Bjarne Stroustrup"];
+            if(i%5===2) { text="Apa output dari print(10//3)?"; opt=["3","3.33","4","2","error"]; }
+            else if(i%5===3) { text="Tipe data immutable?"; opt=["tuple","list","dict","set","array"]; }
+            else if(i%5===4) { text="Fungsi input() mengembalikan tipe?"; opt=["str","int","float","bool","list"]; }
+            else if(i%5===0) { text="Operator pangkat?"; opt=["**","^","pow","*","&&"]; }
+            bank.push({ text, opt, jawab:0 });
+        }
+        return bank;
+    }
+
+    function startQuiz() {
+        let name = document.getElementById('studentName').value.trim();
+        let kelas = document.getElementById('studentClass').value.trim();
+        if(!name || !kelas) { alert("Isi nama dan kelas!"); return; }
+        
+        soalBank = generateSoalBank();
+        quizState.name = name;
+        quizState.kelas = kelas;
+        quizState.answers = new Array(100).fill(null);
+        quizState.current = 0;
+        quizState.timeLeft = 4500;
+        quizState.submitted = false;
+        
+        document.getElementById('quizAuth').classList.add('hide');
+        document.getElementById('quizActive').classList.remove('hide');
+        document.getElementById('quizResult').classList.add('hide');
+        document.getElementById('quizName').innerText = name;
+        document.getElementById('quizClass').innerText = kelas;
+        renderQuizSoal();
+        startQuizTimer();
+    }
+
+    function renderQuizSoal() {
+        let s = soalBank[quizState.current];
+        let html = `<div class="soal-container"><strong>Soal ${quizState.current+1}. ${s.text}</strong>`;
+        s.opt.forEach((opt,i) => {
+            let selected = (quizState.answers[quizState.current] === i) ? 'selected' : '';
+            html += `<div class="option-item ${selected}" onclick="pilihQuizJawaban(${i})">${String.fromCharCode(65+i)}. ${opt}</div>`;
+        });
+        html += `</div>`;
+        document.getElementById('quizSoal').innerHTML = html;
+        document.getElementById('quizCounter').innerText = `Soal ${quizState.current+1}/100`;
+        let answered = quizState.answers.filter(a => a !== null).length;
+        document.getElementById('quizProgressFill').style.width = (answered/100*100)+'%';
+    }
+
+    function pilihQuizJawaban(idx) {
+        quizState.answers[quizState.current] = idx;
+        renderQuizSoal();
+    }
+
+    function startQuizTimer() {
+        if(quizState.timer) clearInterval(quizState.timer);
+        quizState.timer = setInterval(() => {
+            if(quizState.timeLeft <= 0) {
+                clearInterval(quizState.timer);
+                alert("Waktu habis!");
+                submitQuiz();
+            } else {
+                quizState.timeLeft--;
+                let menit = Math.floor(quizState.timeLeft/60);
+                let detik = quizState.timeLeft%60;
+                document.getElementById('timerDisplay').innerText = `${menit.toString().padStart(2,'0')}:${detik.toString().padStart(2,'0')}`;
+            }
+        }, 1000);
+    }
+
+    function submitQuiz() {
+        if(quizState.submitted) return;
+        clearInterval(quizState.timer);
+        let score = 0;
+        for(let i=0;i<100;i++) {
+            if(quizState.answers[i] === soalBank[i].jawab) score++;
+        }
+        hasilQuiz.push({ nama: quizState.name, kelas: quizState.kelas, nilai: score, tgl: new Date().toLocaleString() });
+        document.getElementById('quizActive').classList.add('hide');
+        document.getElementById('quizResult').classList.remove('hide');
+        document.getElementById('quizResultText').innerHTML = `🎉 ${quizState.name} (${quizState.kelas})<br>Skor: ${score}/100 (${score} poin) 🎉`;
+        quizState.submitted = true;
+    }
+
+    function resetQuiz() {
+        document.getElementById('quizAuth').classList.remove('hide');
+        document.getElementById('quizActive').classList.add('hide');
+        document.getElementById('quizResult').classList.add('hide');
+        if(quizState.timer) clearInterval(quizState.timer);
+    }
+
+    // Event listener untuk quiz buttons
+    document.getElementById('quizPrevBtn').onclick = () => { if(quizState.current > 0) { quizState.current--; renderQuizSoal(); } };
+    document.getElementById('quizNextBtn').onclick = () => { if(quizState.current < 99) { quizState.current++; renderQuizSoal(); } };
+    document.getElementById('quizSubmitBtn').onclick = () => submitQuiz();
+
+    // ============ REFLEKSI ============
+    function showRefleksi(jenis) {
+        let form = document.getElementById('refleksiForm');
+        let html = `<h3>Refleksi ${jenis === 'siswa' ? 'Siswa' : 'Guru'} (10 Esai)</h3>`;
+        for(let i=1;i<=10;i++) {
+            html += `<div><label><strong>${i}. Apa tantangan memahami Python dan solusinya?</strong></label>
+                     <textarea id="ref_${i}" rows="2" style="width:100%"></textarea></div>`;
+        }
+        html += `<button onclick="simpanRefleksi('${jenis}')">💾 Simpan Refleksi</button>`;
+        form.innerHTML = html;
+        form.classList.remove('hide');
+        document.getElementById('refleksiSuccess').classList.add('hide');
+    }
+
+    function simpanRefleksi(jenis) {
+        let jawaban = [];
+        for(let i=1;i<=10;i++) {
+            let textarea = document.getElementById(`ref_${i}`);
+            if(textarea) jawaban.push(textarea.value);
+            else jawaban.push('');
+        }
+        if(jenis === 'siswa') {
+            let nama = prompt("Nama Siswa:");
+            let kelas = prompt("Kelas:");
+            if(nama && kelas) refleksiSiswa.push({ nama, kelas, jawaban, tgl: new Date().toLocaleString() });
+        } else {
+            let nama = prompt("Nama Guru:");
+            if(nama) refleksiGuru.push({ nama, jawaban, tgl: new Date().toLocaleString() });
+        }
+        document.getElementById('refleksiSuccess').classList.remove('hide');
+        setTimeout(() => document.getElementById('refleksiSuccess').classList.add('hide'), 2000);
+        document.getElementById('refleksiForm').classList.add('hide');
+    }
+
+    // ============ LOGIN GURU ============
+    function loginGuru() {
+        let modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `<div class="modal-card">
+            <h2>🔐 Login Guru</h2>
+            <input type="password" id="guruPass" placeholder="Password">
+            <button onclick="authGuru()">Masuk</button>
+            <button onclick="this.closest('.modal').remove()">Tutup</button>
+        </div>`;
+        document.body.appendChild(modal);
+    }
+
+    function authGuru() {
+        let pass = document.getElementById('guruPass').value;
+        if(pass === "Nung#25") {
+            document.querySelector('.modal').remove();
+            let guruModal = document.createElement('div');
+            guruModal.className = 'modal';
+            let quizHtml = hasilQuiz.map(q => `<li>${q.nama} (${q.kelas}) - Nilai: ${q.nilai}/100</li>`).join('');
+            let refSiswaHtml = refleksiSiswa.map(r => `<li><b>${r.nama} (${r.kelas})</b><br>${r.jawaban.map((j,idx)=>`${idx+1}. ${j.substring(0,80)}`).join('<br>')}</li>`).join('');
+            let refGuruHtml = refleksiGuru.map(r => `<li><b>${r.nama}</b><br>${r.jawaban.map((j,idx)=>`${idx+1}. ${j.substring(0,80)}`).join('<br>')}</li>`).join('');
+            guruModal.innerHTML = `<div class="modal-card" style="max-width:700px; max-height:80vh; overflow:auto;">
+                <h2>📊 Dashboard Guru</h2>
+                <h3>📋 Hasil Quiz Siswa</h3><ul>${quizHtml || "<li>Belum ada quiz</li>"}</ul>
+                <h3>📝 Refleksi Siswa</h3><ul>${refSiswaHtml || "<li>Belum ada</li>"}</ul>
+                <h3>👩‍🏫 Refleksi Guru</h3><ul>${refGuruHtml || "<li>Belum ada</li>"}</ul>
+                <button onclick="this.closest('.modal').remove()">Tutup</button>
+            </div>`;
+            document.body.appendChild(guruModal);
+        } else {
+            alert("Password salah!");
+            document.querySelector('.modal').remove();
+        }
+    }
+
+    // ============ INISIALISASI ============
+    // Tampilkan panel materi pertama kali
+    showPanel('materi');
+</script>
+</body>
+</html>
